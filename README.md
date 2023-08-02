@@ -1,5 +1,7 @@
 # Timewarp - Investigating conditional density models for molecular dynamics prediction
 
+The code in this repository accompanies the preprint ``[Timewarp: Transferable Acceleration of Molecular Dynamics by Learning Time-Coarsened Dynamics](https://arxiv.org/abs/2302.01170)'', by Leon Klein, Andrew Y. K. Foong, Tor Erlend Fjelde, Bruno Mlodozeniec, Marc Brockschmidt, Sebastian Nowozin, Frank Noé, and Ryota Tomioka.
+
 This directory contains code for various density models that model $p(y|x)$, where $y$ is the final state of a molecule and $x$ is the initial state.
 
 
