@@ -1,0 +1,25 @@
+# This achieves a AD-1 validation NLL of -6.25 after 100k iterations
+seed: 0
+dataset: AD-1
+step_width: 1000
+learning_rate: 1e-4
+warmup_steps: 1000
+weight_decay: 0.0
+batch_size: 32
+num_epochs: 1000
+patience: 100
+data_augmentation: true
+measure_equivariance_discrepancy: false
+use_aml_logging: false
+model_config:
+  model_type: transformer_nvp
+  transformer_nvp_config:
+    atom_embedding_dim: 32
+    transformer_hidden_dim: 128
+    latent_mlp_hidden_dims: [256]
+    num_coupling_layers: 8
+    num_transformer_layers: 3
+    transformer_config:
+      n_head: 8
+      dim_feedforward: 2048
+      dropout: 0

@@ -1,0 +1,27 @@
+seed: 0
+dataset: AD-1
+dataset_use_lmdb: true
+step_width: 1000
+learning_rate: 1.0e-2
+warmup_steps: 1000
+weight_decay: 0.0
+batch_size: 32
+num_epochs: 1000
+patience: 100
+data_augmentation: true
+measure_equivariance_discrepancy: false
+use_aml_logging: false
+model_config:
+  model_type: transformer_cvae
+  transformer_cvae_config:
+    atom_embedding_dim: 32
+    transformer_hidden_dim: 128
+    latent_mlp_hidden_dims: [256]
+    num_transformer_layers: 24
+    latent_cvae_dim: 8   # per-atom CVAE latent dim
+    num_elbo_samples: 1
+    elbo_estimator: elbo
+    transformer_config:
+      n_head: 8
+      dim_feedforward: 2048
+      dropout: 0

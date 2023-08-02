@@ -1,0 +1,75 @@
+name: timewarp
+channels:
+  - tubiana
+  - pytorch
+  - conda-forge
+  - omnia
+  - psi4
+  - defaults
+dependencies:
+  - python==3.8.10
+  - pip=20.1.1  # See https://github.com/Azure/MachineLearningNotebooks/issues/1110 - using this specific pip works around ruamel.yaml not found error
+  # System utils:
+  - psutil
+  # Py utils:
+  - pytest
+  - docopt
+  - pyyaml
+  - pillow
+  # MD utils:
+  - nglview==3.0.3
+  - mdtraj==1.9.7
+  - openmm==7.7
+  - pdbfixer==1.8.1
+  - pymol-open-source==2.4.0
+  - ambertools==21.11
+  - biopython==1.79
+  # Quantum chemistry
+  #- nwchem  # conflicts :-(
+  - ase==3.22.1
+  - psi4
+  - xtb==6.4.1
+  - xtb-python==20.2
+  # ML utils:
+  - pytorch=1.9.0=py3.8_cuda11.1_cudnn8.0.5_0
+  - pip:
+    # ML utils only available via pip:
+    - -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html  # This needs to match cuda used for pytorch
+    # - torch-scatter
+    # Tensorboard does't work well with protobuf 3.19+.
+    # Related: https://github.com/tensorflow/tensorboard/issues/5708
+    - protobuf~=3.19.0
+    - tensorboard
+    # Making AML happy eventually
+    - azureml-defaults
+    - msrest==0.6.19
+    - azure-mgmt-containerregistry==2.8.0
+    - azure-mgmt-keyvault==8.0.0
+    - azure-mgmt-subscription==1.0.0
+    - azureml-core==1.36-post2
+    - azure-identity
+    # More MD utils:
+    - ase
+    - git+https://github.com/noegroup/bgflow.git
+    - deeptime
+    # Py utils:
+    - black==22.3.0
+    - flake8
+    - omegaconf
+    - pre-commit
+    - tqdm
+    - azure-storage-blob>=12
+    - azure-mgmt-storage
+    - deepspeed
+    - lmdb
+    - cached-property
+    - setuptools==59.5.0  # See https://stackoverflow.com/questions/70520120/attributeerror-module-setuptools-distutils-has-no-attribute-version
+    - mpi4py
+    - gitpython
+    - einops
+    - multimethod
+    - arviz
+    # Plotting
+    - pandas
+    - plotly
+    - monty  # dependency of utilities.tests that are run using this environment

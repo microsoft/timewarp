@@ -1,0 +1,14 @@
+seed: 0
+dataset: AD-1
+step_width: 1000
+learning_rate: 1e-2
+warmup_steps: 1000
+weight_decay: 0.0
+batch_size: 32
+num_epochs: 1000
+patience: 100
+data_augmentation: false
+measure_equivariance_discrepancy: false
+use_aml_logging: false
+model_config:
+  model_type: euler_maruyama_gaussian

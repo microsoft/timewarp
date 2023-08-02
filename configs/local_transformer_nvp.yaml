@@ -1,0 +1,26 @@
+seed: 0
+dataset: AD-1
+step_width: 1000
+learning_rate: 1e-4
+warmup_steps: 1000
+weight_decay: 0.0
+batch_size: 32
+num_epochs: 1000
+patience: 100
+data_augmentation: true
+measure_equivariance_discrepancy: false
+use_aml_logging: false
+model_config:
+  model_type: custom_attention_transformer_nvp
+  custom_transformer_nvp_config:
+    atom_embedding_dim: 16
+    latent_mlp_hidden_dims: [256]
+    num_coupling_layers: 8
+    num_transformer_layers: 3
+    encoder_layer_config:
+      d_model: 128
+      dim_feedforward: 2048
+      num_heads: 8
+      dropout: 0
+      attention_type: local
+      max_radius: 0.2

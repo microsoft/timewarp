@@ -1,0 +1,98 @@
+description: Data creation for T1B-huge
+
+target:
+  service: amlk8s
+  #name: itplabrr1cl1
+  #name: itpeusp100cl
+  name: ms-shared
+  vc: resrchvc
+
+environment:
+  image: azureml/openmpi4.1.0-cuda11.1-cudnn8-ubuntu20.04:latest
+  conda_yaml_file: $CONFIG_DIR/../../../infrastructure/timewarp-environment.yml
+  image_setup:
+    - apt -y update && apt install -y libglvnd-dev
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/../../../
+
+storage:
+  sim_data_store:
+    storage_account_name: feynman0storage
+    container_name: simulated-data
+    mount_dir: /mnt/simulated-data
+
+  raw_data_store:
+    storage_account_name: feynman0storage
+    container_name: raw-data
+    mount_dir: /mnt/raw-data
+
+search:
+    job_template:
+        name: '{experiment_name:s}_{pdbpathbase}'
+        sku: G1
+        command:
+        - PYTHONPATH=. 
+          python projects/simulation/simulate_trajectory.py 
+            --preset=amber14-implicit
+            --spacing=10000 --sampling=1000000000
+            --cpmins=120
+            /mnt/raw-data/protein-data/T1B-peptides/{pdbpathbase}.pdb
+            /mnt/simulated-data/trajectory-data/T1B-peptides-huge/{pdbpathbase}-traj.pdb
+
+    type: grid
+    max_trials: 1000
+    parallel_trials: 256
+    params:
+      - name: pdbpathbase
+        # 177 PDB files from T1B-peptides
+        values: choice(
+          "test/1etl", "test/1hgz", "test/1hje", "test/1ifm",
+          "test/1ifn", "test/1not", "test/1ql1", "test/1xy1",
+          "test/2ag3", "test/2ifm", "test/2ifn",
+          "test/2ifo", "test/2onv", "test/2onw", "test/2y29",
+          "test/3dgj", "test/3ftr", "test/3fva", "test/3hyd",
+          "test/3ifm", "test/3loz", "test/3sgn",
+          "test/3sgs", "test/4ifm", "test/4mgp", "test/4nio",
+          "test/4r0p", "test/4r0u", "test/4rp6", "test/4w5y",
+          "test/4xfn", "test/5e61", "test/5k2h", "test/5n9i",
+          "test/5v63", "test/5vos", "test/5w50", "test/5wia",
+          "test/5xsg", "test/6dix", "test/6g8d", "test/6kj2",
+          "test/6kj3", "test/6mw2", "test/6n4p", "test/6php",
+          "test/6sbw", "train/1akg", "train/1bh0",
+          "train/1etn", "train/1gcn", "train/1hgv", "train/1hh0",
+          "train/1ifd", "train/1ifp", "train/1pef",
+          "train/1uno", "train/1xy2", "train/1yjp", "train/2c0w",
+          "train/2okz", "train/2ol9", "train/2olx",
+          "train/2omm", "train/2omp", "train/2on9", "train/2ovc",
+          "train/2xkm", "train/2y3j", "train/2y3l", "train/3fpo",
+          "train/3ftk", "train/3ftl", "train/3hex", "train/3md5",
+          "train/3njw", "train/3nve", "train/3nvg", "train/3ow9",
+          "train/3pzz", "train/3q2x", "train/3v86", "train/3zy1",
+          "train/4g13", "train/4g14", "train/4nip", "train/4np8",
+          "train/4onk", "train/4p6k", "train/4rik", "train/4ril",
+          "train/4ttl", "train/4uby", "train/4w5l", "train/4wbv",
+          "train/5awl", "train/5e5v", "train/5e5z",
+          "train/5knz", "train/5mas", "train/5oqz", "train/5txj",
+          "train/5w52", "train/5whp", "train/5wiq", "train/5wkd",
+          "train/5zgd", "train/5zgl", "train/6btk", "train/6bxv",
+          "train/6bxx", "train/6bzm", "train/6c3s", "train/6c3t",
+          "train/6c4o", "train/6cf4", "train/6cfh", "train/6cg3",
+          "train/6dj0", "train/6dky", "train/6dkz", "train/6eex",
+          "train/6g8c", "train/6g8e", "train/6g9g", "train/6kj4",
+          "train/6m7m", "train/6m9i", "train/6m9j", "train/6nb9",
+          "train/6niv", "train/6nk4", "train/6o4j", "train/6odg",
+          "train/6rha", "train/6rhb", "train/6rhd", "train/6udr",
+          "train/6udw", "train/6uf8", "train/6ufu",
+          "train/6wpq", "val/1crn", "val/1edn",
+          "val/1ifi", "val/1ifj", "val/1pen",
+          "val/2omq", "val/2ona", "val/2onx", "val/3c3h",
+          "val/3dg1", "val/3md4", "val/3nhc", "val/3sgo",
+          "val/4lh9", "val/4r0w", "val/4tut", "val/4w67",
+          "val/4w71", "val/4wbu", "val/4xfo", "val/4znn",
+          "val/5e5x", "val/5k2g", "val/5v5b", "val/5vsg",
+          "val/5whn", "val/5wkb", "val/6av8", "val/6bwz",
+          "val/6cb9", "val/6cew",
+          "val/6mw1", "val/6oiz", "val/6phj", "val/6phq")

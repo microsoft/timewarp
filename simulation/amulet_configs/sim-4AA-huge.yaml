@@ -1,0 +1,56 @@
+description: Data creation for 4AA-huge
+# amlt run --sla Basic projects/simulation/amulet_configs/sim-4AA-huge.yaml 4AA-huge-test-set
+# amlt run projects/simulation/amulet_configs/sim-4AA-huge.yaml 4AA-huge-test-set
+
+target:
+  service: sing
+  #name: msroctovc
+  name: msrresrchvc
+  #service: amlk8s
+  #name: ms-shared
+  # vc: MS-Shared
+
+environment:
+  image: azureml/openmpi4.1.0-cuda11.1-cudnn8-ubuntu20.04:latest
+  conda_yaml_file: $CONFIG_DIR/../../../infrastructure/timewarp-environment.yml
+  image_setup:
+    - apt -y update && apt install -y libglvnd-dev
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/../../../
+
+storage:
+  sim_data_store:
+    storage_account_name: feynman0storage
+    container_name: simulated-data
+    mount_dir: /mnt/simulated-data
+
+  raw_data_store:
+    storage_account_name: feynman0storage
+    container_name: raw-data
+    mount_dir: /mnt/raw-data
+
+search:
+    job_template:
+        name: '{experiment_name:s}_{pdbpathbase}-2'
+        sku: 16G1-V100
+        command:
+        - PYTHONPATH=. 
+          python projects/simulation/simulate_trajectory.py 
+            --preset=amber14-implicit
+            --spacing=10000
+            --sampling=2000000000
+            --cpmins=120
+            /mnt/simulated-data/trajectory-data/4AA/{pdbpathbase}-traj-state0.pdb
+            /mnt/simulated-data/trajectory-data/4AA-huge/{pdbpathbase}-2-traj.pdb
+
+    type: grid
+    max_trials: 200
+    parallel_trials: 50
+    params:
+      - name: pdbpathbase
+        # 30 of 400 PDB files from 4AA-peptides
+        values: choice( 
+                "test/EASS", "test/AGAK", "test/EMVG", "test/IMYP")
