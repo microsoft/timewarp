@@ -1,14 +1,92 @@
-# Project
+# Timewarp - Investigating conditional density models for molecular dynamics prediction
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This directory contains code for various density models that model $p(y|x)$, where $y$ is the final state of a molecule and $x$ is the initial state.
 
-As the maintainer of this project, please make a few updates:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Training
+
+Various experiment configs can be found in `configs/`, each corresponding to different models. Please see `models.md` for a description.
+
+For example, to train the kernel transformerNVP model on the AD-1 alanine-dipeptide dataset (this should take less than 12 hours on a single machine with a Tesla P100 GPU), run 
+```
+python train.py configs/kernel_transformer_nvp.yaml
+``` 
+Arguments in the yaml file can be overridden on the command line, e.g. 
+```
+python train.py configs/kernel_transformer_nvp.yaml learning_rate=0.01
+```
+
+## Monitoring and Reproducibility
+
+Metrics such as the training and validation losses are automatically logged to TensorBoard, and are saved in the output directory (default is `outputs/`) along with the experiment config and the best model.
+
+
+## Plotting Samples, Energies, Internal coordinate Distributions, and More, locally
+
+After the model is trained, you can run:
+```
+python sample.py \
+    --savefile path-to-model-output-directory/best_model.pt \
+    --data_dir path-to-directory-containing-protein-data/ \
+    --protein protein-pdb-name \
+    --num_samples 20 \
+    --output_dir path-to-directory-to-save-figures/
+```
+This will generate figures and GIFs showing conditional samples from the model, and also the ground truth initial and final states of the model. A plot of the potential, kinetic and total energies along the speficied trajectory is also generated. 
+
+For some datasets there are additional evaluation scripts. The evaluation script `evaluate_o2.py` for the oxygen molecule data sets (currently `O2` and `O2-CoM`) can be run with 
+```
+python evaluate_o2.py \
+    --savefile path-to-model-output-directory/best_model.pt \
+    --data_dir path-to-directory-containing-protein-data/ \
+    --num_samples 20 \
+    --output_dir path-to-directory-to-save-figures/ \
+    --sample True
+```
+This will generate a figures for the conditional distribution for a single conditioning sample as well as plots for samples generates with the model using the Metropolis–Hastings algorithm.
+
+A more general evaluation script `evaluate.py` is designed for Di- and Tetra-peptides, such as Alanine Dipeptide. It can be run with
+```
+python evaluate.py \
+    path-to-model-output-directory/best_model.pt \
+    --data_dir path-to-directory-containing-protein-data/ \
+    --num_samples 1000 \
+    --output_dir path-to-directory-to-save-figures/ 
+```
+but has many more options. This command will sample each 1000 samples conditioned on samples from the Boltzmann distribution, a single conditioning state, as well sampling with the model by accepting all proposals. 
+
+To sample with the model using the Metropolis Hastings algorithm, generating and accepting proposals for a single conditioning state in parallel, can we run with
+```
+python evaluate.py \
+    path-to-model-output-directory/best_model.pt \
+    --data_dir path-to-directory-containing-protein-data/ \
+    --num_samples 1000 \
+    --output_dir path-to-directory-to-save-figures/ \
+    --mh  \
+    --sample--num-proposal-steps 1000
+```
+In the sampling process this will propose 1000 samples for each conditioning state and add all samples until the first accepted one to the Markov chain. This parallelization speeds up the sampling by a lot depending on the acceptance probabilities.
+
+
+## Multi-GPU training
+
+We use [deepspeed](https://www.deepspeed.ai/) for multi-GPU training. To run data-parallel training on 2 GPUs,
+```
+deepspeed --num_gpus=2 train.py configs/kernel_transformer_nvp.yaml
+```
+Note that the batch size per GPU is `batch_size` divided by the number of GPUs. In other words, you need to multiply `batch_size` by the number of available GPUs to keep the GPU utilization constant.
+
+
+## Config arguments
+
+See [`training_config.py`](training_config.py).
+
+
+## Model Variants
+
+The current model of interest is the model_constructor.custom_transformer_nvp_constructor with settings from
+`configs/kernel_transformer_nvp.yaml`.
+
 
 ## Contributing
 
