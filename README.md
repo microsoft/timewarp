@@ -90,6 +90,21 @@ The current model of interest is the model_constructor.custom_transformer_nvp_co
 `configs/kernel_transformer_nvp.yaml`.
 
 
+## Responsible AI FAQ
+- What is Timewarp? 
+     - Timewarp is a neural network that predicts the future 3D positions of a small peptide (2- 4 amino acids) based on its current state. It is a research project that investigates using deep learning to accelerate molecular dynamics simulations.
+- What can Timewarp do?  
+    - Timewarp can be used to sample from the equilibrium distribution of small peptides.
+- What is/are Timewarp’s intended use(s)? 
+    - Timewarp is intended for machine learning and molecular dynamics research purposes only.
+- How was Timewarp evaluated? What metrics are used to measure performance? 
+    - Timewarp was evaluated by comparing the speed of molecular dynamics sampling with standard molecular dynamics systems that rely on numerical integration. Timewarp is sometimes faster than these standard systems.
+- What are the limitations of Timewarp? How can users minimize the impact of Timewarp’s limitations when using the system? 
+    - As a research project, Timewarp has many limitations. The main ones are that it only works for very small peptides (2-4 amino acids), and that it does not lead to a wall-clock speed up for many peptides. 
+- What operational factors and settings allow for effective and responsible use of Timewarp? 
+    - Timewarp should be used purely for research purposes only.
+
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
