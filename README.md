@@ -4,6 +4,9 @@ The code in this repository accompanies the preprint ``[Timewarp: Transferable A
 
 This directory contains code for various density models that model $p(y|x)$, where $y$ is the final state of a molecule and $x$ is the initial state.
 
+## Data and Checkpoints
+
+Training data and model checkpoints can be found on Huggingface [here](https://huggingface.co/datasets/microsoft/timewarp).
 
 ## Training
 
