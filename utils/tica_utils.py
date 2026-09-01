@@ -24,7 +24,7 @@ def tica_features(trajectory, use_dihedrals=True, use_distances=True, selection=
     # n_atoms = trajectory.xyz.shape[1]
     if use_dihedrals:
         _, phi = md.compute_phi(trajectory)
-        _, psi = md.compute_phi(trajectory)
+        _, psi = md.compute_psi(trajectory)
         _, omega = md.compute_omega(trajectory)
         dihedrals = np.concatenate([*wrap(phi), *wrap(psi), *wrap(omega)], axis=-1)
     if use_distances:
